@@ -23,4 +23,14 @@ migrate = Migrate(app, models.db)
 def load_user(utilizadorId):
     return models.Utilizador.query.filter_by(id=utilizadorId).first()
 
+@login_manager.request_loader
+def loader_user_from_request(request):
+    api_key = request.headers.get('Authorization')
+    if api_key:
+        api_key = api_key.replace('Basic ', '', 1)
+        utilizador = models.Utilizador.query.filter_by(api_key=api_key).first()
+        if utilizador:
+            return utilizador
+
+
 app.run()
