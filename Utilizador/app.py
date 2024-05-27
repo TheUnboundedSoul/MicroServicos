@@ -32,5 +32,13 @@ def loader_user_from_request(request):
         if utilizador:
             return utilizador
 
+class CustomSessionInterface(SecureCookieSessionInterface):
+    """ impedir a criação de sessões a partir de solicitações da API """
 
-app.run()
+    def save_sessiosn(self,*args, **kwargs):
+        if g.get('login_via_header'):
+            return
+        return super(CustomSessionInterface, self).save_session(*args, **kwargs)
+    
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)
