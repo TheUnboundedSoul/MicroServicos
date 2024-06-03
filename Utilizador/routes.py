@@ -2,13 +2,76 @@ from flask import Blueprint,jsonify, request,make_response
 from models import db, Utilizador
 from flask_login import login_user, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timezone
 
 utilizador_blueprint = Blueprint('utilizador_api_routes', __name__, url_prefix='/api/utilizador')
 
+@utilizador_blueprint.route('/todos', methods=['GET'])
+def get_Todos_Utilizadores():
+    todosUtilizadores = Utilizador.query.all()
+    result = [utilizador.serializar() for utilizador in todosUtilizadores]
+    response = {
+        'message': 'Todos os Utilizadores.',
+        'result': result
+    }
+    return jsonify(response)
+
 @utilizador_blueprint.route('/criar', methods=['POST'])
-def criar_utilizador():
+def criar_Utilizador():
     try:
-        # Verificação se o nomeUtilizador e apassword estao presentes
-        nomeUtilizador = request.form.get
+        # Verificação se o nomeUtilizador e a password estão presentes
+        nomeUtilizador = request.form.get('nomeUtilizador')
+        password = request.form.get('password')
+        if not nomeUtilizador or not password:
+            response = {'message': 'Nome de utilizador e senha são obrigatórios.'}
+            return jsonify(response), 400
+        
+        utilizador = Utilizador()
+        utilizador.nomeUtilizador = request.form['nomeUtilizador']
+        utilizador.password = generate_password_hash(
+            request.form['password'],
+            method= 'pbkdf2:sha256'
+        )
+        utilizador.administrador = False
+
+        db.session.add(utilizador)
+        db.session.commit()
+        response = {'message': 'Utilizador criado com sucesso.',
+                    'result': utilizador.serializar()}
+    except Exception as e:
+        print(str(e))
+        response = {'message': 'Erro na criação do utilizador.'}
+    return jsonify(response)
+
+@utilizador_blueprint.route('/login', methods=['POST'])
+def login():
+    nomeUtilizador = request.form.get('nomeUtilizador')
+    password = request.form.get('password')
+
+    utilizador = Utilizador.query.filter_by(nomeUtilizador=nomeUtilizador).first()
+    if not utilizador:
+        response = {'message': 'Este utilizador não existe.'}
+        return make_response(jsonify(response),401)
+    if check_password_hash(utilizador.password, password):
+        utilizador.update_api_key()
+        db.session.commit()
+        login_user(utilizador)
+        response = {'message': 'Conetado','api_key': utilizador.api_key}
+        return make_response(jsonify(response),200)
+    
+    response = {'message': 'Autenticação incorreta.'}
+    return make_response(jsonify(response),401)
+
+@utilizador_blueprint.route('/logout', methods=['POST'])
+def logout():
+    if current_user.is_authenticated():
+        logout_user()
+        return jsonify({'message': 'Desconetado.'})
+    return jsonify({'message': 'Não existem utilizadores conetados.'})
+
+@utilizador_blueprint.routes('/<nomeUtilizador>/existe', methods=['GET'])
+def get_Utilizador_existe(nomeUtilizador):
+    utilizador = Utilizador.query.filter_by(nomeUtilizador = nome)
+
 def index():
     return 'Olá Turma'
