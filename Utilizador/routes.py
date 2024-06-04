@@ -71,7 +71,18 @@ def logout():
 
 @utilizador_blueprint.routes('/<nomeUtilizador>/existe', methods=['GET'])
 def get_Utilizador_existe(nomeUtilizador):
-    utilizador = Utilizador.query.filter_by(nomeUtilizador = nome)
+    utilizador = Utilizador.query.filter_by(nomeUtilizador = nomeUtilizador).first()
+    if utilizador:
+        return jsonify({'message': True}),200
+    
+    return jsonify({'message': False}),404
+
+@utilizador_blueprint.route('/', methods=['GET'])
+def get_Utilizador_Atual():
+    if current_user.is_authenticated:
+        return jsonify({'result': current_user.serializar()}), 200
+    else:
+        return jsonify({'message': 'Utilizador não conetado.'}), 401
 
 def index():
     return 'Olá Turma'
