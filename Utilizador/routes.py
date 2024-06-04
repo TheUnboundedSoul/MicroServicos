@@ -2,7 +2,6 @@ from flask import Blueprint,jsonify, request,make_response
 from models import db, Utilizador
 from flask_login import login_user, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timezone
 
 utilizador_blueprint = Blueprint('utilizador_api_routes', __name__, url_prefix='/api/utilizador')
 
