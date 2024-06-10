@@ -3,7 +3,7 @@ from flask.sessions import SecureCookieSessionInterface
 from flask_migrate import Migrate
 from flask_login import LoginManager
 import models
-from Utilizador.routes import utilizador_blueprint
+from routes import utilizador_blueprint
 import os
 
 app = Flask(__name__)
