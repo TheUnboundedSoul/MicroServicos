@@ -68,7 +68,7 @@ def logout():
         return jsonify({'message': 'Desconetado.'})
     return jsonify({'message': 'Não existem utilizadores conetados.'})
 
-@utilizador_blueprint.routes('/<nomeUtilizador>/existe', methods=['GET'])
+@utilizador_blueprint.route('/<nomeUtilizador>/existe', methods=['GET'])
 def get_Utilizador_existe(nomeUtilizador):
     utilizador = Utilizador.query.filter_by(nomeUtilizador = nomeUtilizador).first()
     if utilizador:
