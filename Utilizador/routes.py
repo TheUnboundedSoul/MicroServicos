@@ -1,19 +1,20 @@
-from flask import Blueprint,jsonify, request,make_response
+from flask import Blueprint, jsonify, request, make_response 
 from models import db, Utilizador
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user,logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-utilizador_blueprint = Blueprint('utilizador_api_routes', __name__, url_prefix='/api/utilizador')
+utilizador_blueprint =Blueprint('utilizador_api_routes',__name__,url_prefix='/api/utilizador')
 
-@utilizador_blueprint.route('/todos', methods=['GET'])
+
+@utilizador_blueprint.route('/todos', methods=['GET']) 
 def get_Todos_Utilizadores():
     todosUtilizadores = Utilizador.query.all()
-    result = [utilizador.serializar() for utilizador in todosUtilizadores]
-    response = {
-        'message': 'Todos os Utilizadores.',
-        'result': result
+    result = [utilizador.serializar() for utilizador in todosUtilizadores] 
+    response ={
+        'message': 'Todos os Utilizadores.', 'result': result
     }
     return jsonify(response)
+
 
 @utilizador_blueprint.route('/criar', methods=['POST'])
 def criar_Utilizador():
@@ -22,21 +23,19 @@ def criar_Utilizador():
         nomeUtilizador = request.form.get('nomeUtilizador')
         password = request.form.get('password')
         if not nomeUtilizador or not password:
-            response = {'message': 'Nome de utilizador e senha são obrigatórios.'}
+            response = {'message': 'Nome de utilizador e senha são obrigatórios.'} 
             return jsonify(response), 400
-        
+    
         utilizador = Utilizador()
-        utilizador.nomeUtilizador = request.form['nomeUtilizador']
+        utilizador.nomeUtilizador = request.form['nomeUtilizador'] 
         utilizador.password = generate_password_hash(
             request.form['password'],
-            method= 'pbkdf2:sha256'
-        )
+            method = 'pbkdf2:sha256') 
         utilizador.administrador = False
-
+        
         db.session.add(utilizador)
         db.session.commit()
-        response = {'message': 'Utilizador criado com sucesso.',
-                    'result': utilizador.serializar()}
+        response = {'message': 'Utilizador criado com sucesso.', 'result:': utilizador.serializar()}
     except Exception as e:
         print(str(e))
         response = {'message': 'Erro na criação do utilizador.'}
@@ -44,8 +43,8 @@ def criar_Utilizador():
 
 @utilizador_blueprint.route('/login', methods=['POST'])
 def login():
-    nomeUtilizador = request.form.get('nomeUtilizador')
-    password = request.form.get('password')
+    nomeUtilizador = request.form('nomeUtilizador')
+    password = request.form('password')
 
     utilizador = Utilizador.query.filter_by(nomeUtilizador=nomeUtilizador).first()
     if not utilizador:
