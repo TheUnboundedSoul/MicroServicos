@@ -30,10 +30,11 @@ def load_user_from_request(request):
         utilizador = models.Utilizador.query.filter_by(api_key=api_key).first()
         if utilizador:
             return utilizador
+    return None
 
 class CustomSessionInterface(SecureCookieSessionInterface):
     """ Impedir a criação de sessões a partir de solicitações da API """
-    def save_session(self, *args, **kwargs):
+    def save_sessions(self, *args, **kwargs):
         if g.get('login_via_header'):
             return
         return super(CustomSessionInterface, self).save_session(*args, **kwargs)

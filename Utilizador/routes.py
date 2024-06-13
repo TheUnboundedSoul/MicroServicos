@@ -82,6 +82,3 @@ def get_Utilizador_Atual():
         return jsonify({'result': current_user.serializar()}), 200
     else:
         return jsonify({'message': 'Utilizador não conetado.'}), 401
-
-def index():
-    return 'Olá Turma'

@@ -1,8 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
@@ -27,7 +26,7 @@ class Utilizador(db.Model, UserMixin):
             'id': self.id,
             'nomeUtilizador': self.nomeUtilizador,
             'administrador': self.administrador,
-            'aoi_key': self.api_key,
+            'api_key': self.api_key,
             'ativo': self.ativo,
         }
 
