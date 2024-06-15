@@ -3,22 +3,24 @@ from flask.sessions import SecureCookieSessionInterface
 from flask_migrate import Migrate
 from flask_login import LoginManager
 import models
-from routes import utilizador_blueprint 
+from routes import utilizador_blueprint
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'DhWa9FvA7Y5g7Cni2wORxg'
+app.config['SECRET_KEY'] = 'I_ngYcYBFSa7U-7_aXkH-g'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-file_path = os.path.abspath(os.path.join(os.getcwd(), 'database','utilizador.db'))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+file_path
+file_path = os.path.abspath(os.path.join(os.getcwd(), 'D:\\Faculdade\\Mestrado\\2 Semestre\\Arquitetura de Software\\Trabalho2\\Shop4UMS\\Utilizador\\database', 'utilizador.db'))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + file_path
 models.init_app(app)
 app.register_blueprint(utilizador_blueprint)
 login_manager = LoginManager(app)
-migrate = Migrate (app, models.db)
+migrate = Migrate(app, models.db)
+
 
 @login_manager.user_loader
 def load_user(utilizadorId):
     return models.Utilizador.query.filter_by(id=utilizadorId).first()
+
 
 @login_manager.request_loader
 def load_user_from_request(request):
@@ -38,6 +40,7 @@ class CustomSessionInterface(SecureCookieSessionInterface):
         if g.get('login_via_header'):
             return
         return super(CustomSessionInterface, self).save_session(*args, **kwargs)
-    
-if __name__ == "__main__":
+
+
+if __name__ == '__main__':
     app.run(debug=True, port=5001)
