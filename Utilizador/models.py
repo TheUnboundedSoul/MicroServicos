@@ -14,7 +14,7 @@ class Utilizador(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True) 
     nomeUtilizador = db.Column(db.String(50), unique=True) 
     password = db.Column(db.String(255))
-    administrador = db.Column (db.Boolean)
+    administrador = db.Column(db.Boolean)
     api_key = db.Column(db.String(255), unique=True, nullable=True)
     ativo = db.Column(db.Boolean, default=True)
     autenticado = db.Column(db.Boolean, default=False)
@@ -31,4 +31,5 @@ class Utilizador(db.Model, UserMixin):
             'ativo': self.ativo,
         }
 
-    def update_api_key(self): self.api_key = generate_password_hash(self.nomeUtilizador + str(datetime.now(timezone.utc)))
+    def update_api_key(self): 
+        self.api_key = generate_password_hash(self.nomeUtilizador + str(datetime.now(timezone.utc)))
