@@ -102,3 +102,18 @@ def checkout():
         return jsonify({'result': encomendaPendente.serializar()})
     else:
         return jsonify({'message': 'Sem encomenda pendente.'})
+
+
+@encomenda_blueprint.route('/historico', methods=['GET'])
+def historico_encomendas():
+    api_key = request.headers.get('Authorization')
+    if not api_key:
+        return jsonify({'message': 'Não está autenticado.'}), 401
+    response = get_utilizador(api_key)
+    utilizador = response.get('result')
+    if not utilizador:
+        return jsonify({'message': 'Não está autenticado.'}), 401
+    
+    encomendas = Encomenda.query.filter_by(utilizadorId=utilizador['id'], aberta=False).all()
+    result = [encomenda.serializar() for encomenda in encomendas]
+    return jsonify(result), 200
